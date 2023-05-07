@@ -51,21 +51,20 @@ void EEPROM_Read_String(uint8_t * a_STR){
 	{
 		EEPROM_Read(&a_STR[LV_Index_I]);
 		
-	LCD_Write_Number((uint32_t)a_STR[LV_Index_I]);
-	}
-	LV_Index_I=16;
 	
+	}
 
-LCD_GoTo(2,0);
-if (LV_Index_I>=15)
-{
+}
 
-	for (LV_Index_I=16;LV_Index_I<20;LV_Index_I++)
+void EEPROM_Read_String_With_size(uint8_t * a_STR, uint8_t a_Length){
+	uint8_t LV_Index_I=0;
+
+	for (LV_Index_I=0;LV_Index_I<a_Length;LV_Index_I++)
 	{
 		EEPROM_Read(&a_STR[LV_Index_I]);
-		LCD_Write_Number((uint32_t)a_STR[LV_Index_I]);
+		
+		
 	}
-}
 
 }
 
@@ -91,4 +90,28 @@ void EEPROM_Write_WithSize (uint8_t *data, uint8_t *_address,uint8_t LV_Length){
 	
 	I2C_stop();															//End Of Communication
 	
+}
+void EEPROM_Read_random(uint8_t *data, uint8_t *_address,uint8_t LV_Length){
+	
+	
+	uint8_t LV_Index_I=0;
+	uint8_t x = 0xa0 ;
+	if(I2C_start()==EVENT_OK){										//Send a Starting Bit and Wait For ACK
+		if(I2C_addressEvent(0xa0,WRITE)==AD_W_SENT_ACK_OK){			//Send an Initializer "0b1010" Specified In the Data Sheet  and an Event Type "R/W" and Wait For ACK
+			if(I2C_sendData(_address)== DATA_SENT_ACK_OK){//Send an Address In the EEPROM  To Start Writing In It
+				if (I2c_Restart()==EVENT_OK)
+					{
+						//To Send The Whole Data String
+						if(I2C_receiveData(data,NACK)== DATA_RECIEVE_NACK_OK){		//Send Data Byte By Byte and Wait For AcK Each Time
+							
+							I2C_stop();	
+						
+						}
+				}
+			
+				
+			}
+		}
+	}
+
 }

@@ -1,81 +1,204 @@
 /*
- * spi.h
+ * hspi.c
  *
- * Created: 5/2/2023 2:15:50 PM
- *  Author: Nada
+ * Created: 05-May-23 6:13:13 PM
+ *  Author: Zerconium
  */ 
 
-//Includes
+
 #include "spi.h"
-// Functions deceleration
 
-void SPI_master_init(void)
+
+
+
+static void (*SPI_Fptr)(void)=NULL;
+
+
+void SPI_MasterInit(en_SPI_Prescaler prescaler)
 {
-    
-		// mosi 5----miso6---------sck 7-----ss 4
-		// configured (MOSI,SS',SCK) pins as output
-
-		DIO_INITPIN(pinb4,OUTPUT);
-		DIO_INITPIN(pinb5,OUTPUT);
-		DIO_INITPIN(pinb7,OUTPUT);
-		DIO_INITPIN(pinb4,OUTPUT);
-		
-		// configured MISO pin as input
-
-		DIO_INITPIN(pinb6,INFREE);
-		
-	/* Enable SPI, Master, set clock rate fck/16 */
-	SPCR = (1<<6)|(1<<4)|(1<<0);
+	/* Set MOSI , SCK and SS as output, MISO as input */
+	DIO_INITPIN(MOSI,OUTPUT);
+	DIO_INITPIN(SCK,OUTPUT);
+	DIO_INITPIN(SS,OUTPUT);
+	DIO_INITPIN(MISO,INPLUP);
 	
-}
-void SPI_slave_init(void)
-{ 
-	  DDRB &= (~(1<<6)) ;    // B6 are configured as input (MISO)
-	  SPCR=0x43;            //SPI is Enable , MSB is transmitted first,  Slave SPI ,SCK is low when idle,Sample in Leading Edge, FOSC/128.
-	  SPSR=0x00;            //Flag is reset , and FOSC/128 is used .
-}
-void SPI_transmit_char(char data)
-{
-/* Start transmission */
-SPDR = data;
-/* Wait for transmission complete */
-while(!(SPSR & (1<<7)))
-;
-}
-uint8_t SPI_recieve_char(void)
-{
-	// Wait for reception complete
-	while(!(SPSR & (1<<7)));
-	// Return data register 
-	return SPDR;
-}
+	/* set SS pin to high */
+	DIO_WRITEPIN(SS,HIGH);
+	
+	/* Enable SPI, Master */
+	set_bit(SPCR,SPE);
+	set_bit(SPCR,MSTR);
+	
+	/* 2x speed OFF , flag reset*/
 
-	void SPI_transmit_string(char * string)
+	
+	switch (prescaler)
 	{
+		case PRESCALER_2:
+		clear_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
 		
-		uint8_t i =0 ;
-		while(string[i]!=0)
-		{ SPI_transmit_char((string[i]-'30')); i++;}
+		case PRESCALER_4:
+		clear_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_8:
+		set_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_16:
+		set_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_32:
+		clear_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_64:
+		clear_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_128:
+		set_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
 	}
-
-/*
-void SPI_transmit_string( data)
-{
-	 char i=0;
-	 for(i=0;i<10;i++)
-	 { SPI_SendChar(i);
-		 _delay_ms(1000);
-}
-uint8_t SPI_recieve_string(void)
-{
-	while( (SPSR&&(1<<7))==0 ) ;   // While Transmission not completed wait untill it's complete
-	return SPDR;                 //Return the received data found in Datareister .
 }
 
-int main (void)
-{  
+
+void SPI_SlaveInit (en_SPI_Prescaler prescaler)
+{
+	/* Set MOSI , SCK and SS as input, MISO as output */
+	DIO_INITPIN(MOSI,INPLUP);
+	DIO_INITPIN(SCK,INPLUP);
+	DIO_INITPIN(SS,INPLUP);
+	DIO_INITPIN(MISO,OUTPUT);
+	
+	/* set SS pin to high */
+	DIO_WRITEPIN(SS,HIGH);
+	
+	/* Enable SPI */
+	set_bit(SPCR,SPE);
+	
+	/* 2x speed OFF , flag reset */
+	SPSR &= 0x00 ;
+	
+	switch (prescaler)
+	{
+		case PRESCALER_2:
+		clear_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_4:
+		clear_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_8:
+		set_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_16:
+		set_bit(SPCR,SPR0);
+		clear_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_32:
+		clear_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		set_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_64:
+		clear_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
+		
+		case PRESCALER_128:
+		set_bit(SPCR,SPR0);
+		set_bit(SPCR,SPR1);
+		clear_bit(SPSR,SPI2X);
+		break;
 	}
-	
+}
+
+
+uint8_t SPI_SendReceive(uint8_t data)
+{
+	SPDR=data;
+	while(!read_bit(SPSR,SPIF));
+	return  SPDR;
 	
 }
-*/
+
+
+
+uint8_t SPI_RecievePeriodicChecking(uint8_t * pdata)
+{
+	if (read_bit(SPSR,SPIF))
+	{
+		*pdata=SPDR;
+		return 1;
+	}
+	return 0;
+}
+
+
+void SPI_SendNoBlock(uint8_t data)
+{
+	SPDR = data;
+}
+
+
+
+uint8_t SPI_ReceiveNoBlock(void)
+{
+	return  SPDR;
+}
+
+
+void SPI_InterruptEnable(void)
+{
+	set_bit(SPCR,SPIE);
+}
+
+
+void SPI_InterruptDisable(void)
+{
+	clear_bit(SPCR,SPIE);
+}
+
+
+void SPI_SetCallBack(void (*fptr_local)(void))
+{
+	SPI_Fptr=fptr_local;
+}
+
+
+ISR(SPI_STC_vect)
+{
+	if (SPI_Fptr != NULL)
+	{
+		SPI_Fptr();
+	}
+}

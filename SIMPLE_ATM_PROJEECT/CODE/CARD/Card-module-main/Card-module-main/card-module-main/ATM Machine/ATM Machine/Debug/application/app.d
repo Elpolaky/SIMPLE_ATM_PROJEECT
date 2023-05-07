@@ -26,9 +26,7 @@ application/app.d application/app.o: ../application/app.c \
  ../application/../HAL/keypad/../../MCAL/dio/DIO.h \
  ../application/../HAL/keypad/../../SERVICE/STD_TYPES.h \
  ../application/../HAL/lcd/LCD.h ../application/../MCAL/spi/spi.h \
- ../application/../MCAL/spi/../../Service/STD_TYPES.h \
- ../application/../MCAL/spi/../MEMORYMAP.h \
- ../application/../MCAL/spi/../DIO/DIO.h
+ ../application/../MCAL/spi/../dio/DIO.h
 
 ../application/app.h:
 
@@ -88,8 +86,4 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ../application/../MCAL/spi/spi.h:
 
-../application/../MCAL/spi/../../Service/STD_TYPES.h:
-
-../application/../MCAL/spi/../MEMORYMAP.h:
-
-../application/../MCAL/spi/../DIO/DIO.h:
+../application/../MCAL/spi/../dio/DIO.h:

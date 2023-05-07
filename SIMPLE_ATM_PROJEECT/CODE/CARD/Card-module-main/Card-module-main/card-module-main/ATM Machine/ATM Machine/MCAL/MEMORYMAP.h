@@ -184,9 +184,7 @@ void INT_VECT(void)
 #define SPDR *((volatile uint8_t*)0x2F)
 #define SPSR *((volatile uint8_t*)0x2E)
 #define SPCR *((volatile uint8_t*)0x2D)
-#define UCSRC *((volatile uint8_t*)0x40)
-#define UBRRL *((volatile uint8_t*)0x29)
-#define UBRRH *((volatile uint8_t*)0x40)
+
 
 
 #endif /* memorymap_H_ */

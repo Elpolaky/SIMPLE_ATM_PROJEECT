@@ -2,13 +2,15 @@
 #include "application/app.h"
 #include <util/delay.h>
 #define F_CPU   8000000u
-uint8_t ad=0x00,ad2=0x10,str1[20]={0},ad3=0b1010000,ad4=0b1010001;
+uint8_t ad=0x00,ad2=0x10,str1[16]={0},str2[4]={},ad3=0b1010000,ad4=0b1010001;
 int main(void)
 {
-	
+
+	SPI_MasterInit(PRESCALER_16);
 	// Programming mode
 	DIO_INITPIN(pinb0,OUTPUT);
 	DIO_WRITEPIN(pinb0,HIGH);
+	
 	LCD_INIT();
 	USART_init();
 	I2C_init(I2C_PRESCALER_16);
@@ -20,12 +22,15 @@ int main(void)
 	USART_Transmit_string ("Please Enter Card PAN:");
 	char *pan =  USART_receive_string(arr_pan);
 	USART_transmit('\n');
-	for (int i=0;i<16;i++)
-	{
-		pan[i]=pan[i]-'30';
-	}
-	EEPROM_Write_WithSize(pan,&ad,16); //---------------------------
-   _delay_ms(100);
+//  	for (int i=0;i<16;i++)
+//  	{
+//  		pan[i]=pan[i]-'30';
+//  	}
+	//pan[16]= '\0';
+	//EEPROM_Write_WithSize(pan,&ad,16); //---------------------------
+  // _delay_ms(100);
+  
+   
 	//*********************************************************************************************************
 	// PIN RECIEVE AND SEND
 	uint8_t pinRecieved='0';
@@ -71,53 +76,52 @@ int main(void)
 		if (pinRecieved=='0') USART_Transmit_string ("Wrong PIN "); 	 
 	}
 	USART_Transmit_string (" finished ");
-
+/*
 		for (int i=0;i<4;i++)
 		{
 			pin[i]=pin[i]-'30';
 		}
-		EEPROM_Write_WithSize(pin,&ad2,4);// Need No size init // SEND D0 at further input // write PAN to EEPROM
+	*/	
+		EEPROM_Write_WithSize(pan,&ad,16); //--- pan sent to EEPROM	
 		_delay_ms(100);
-
+		 //--- pan receive to EEPROM
+		 	EEPROM_Read_String_With_size(str1 ,16);
+		_delay_ms(100);
+	
+		EEPROM_Write_WithSize(pin,&ad2,4);// PAN sent to EEPROM
+		_delay_ms(100);
+	
+		EEPROM_Read_String_With_size(str2 ,4);
+		
+	
+	
 // user mode
-_delay_ms(500);
-DIO_INITPIN(pinc0,OUTPUT);
-DIO_INITPIN(pinc1,OUTPUT);
-	DIO_WRITEPIN(pinc0,LOW);
-		DIO_WRITEPIN(pinc1,LOW);
-	I2C_init(I2C_PRESCALER_16);
+	DIO_WRITEPIN(pinb0,LOW);
+	
+	// sending 
+	uint8_t index = 0;
+	DIO_WRITEPIN(SS, LOW);
+
+	while (str1[index] != '\0')
+	{
+		SPI_SendReceive(str1[index]);
+		index++;
+		_delay_ms(800);
+	}
+	SPI_SendReceive('\0');
+
+	DIO_WRITEPIN(SS, HIGH);
+	
+	
 //USART_init();
 //SPI_master_init();
 //********************************************
 
-EEPROM_Read_String(str1);	
+
 //USART_Transmit_string(str1);
 //SPI_transmit_string(str1);
 
-//*******************************************	*/		
+//*******************************************	*/	
+	
 }
 	
-	/*	
-	LCD_INIT();
-	
-	I2C_init(I2C_PRESCALER_1);
-	
-	TIMER_0_init(NORMAL_MODE);
-	uint8_t STR_Term[16]={1,2,3,4,5,6,7,8,9,9,8,7,6,5,2,2},STR_REad[4]={1,2,3,4},ad=0x00,ad2=0x10,flag=0,str1[21]={0},str2[16]={0},ad3=0b1010000,ad4=0b1010001;
-	
-	if (flag==0)
-	{
-	EEPROM_Write_WithSize(STR_Term,&ad,16);
-		_delay_ms(100);
-		EEPROM_Write_WithSize(STR_REad,&ad2,4);
-
-	}
-
-			//EEPROM_Read_String(str1);
-
-    while (1) 
-    {
-    }
-}
-
-*/
