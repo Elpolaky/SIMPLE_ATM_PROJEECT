@@ -67,7 +67,7 @@ typedef enum {
 	}COLUMN;
 
 typedef enum {
-	ROW_0,
+	ROW_0 = FIRST_ROW_PIN,
 	ROW_1,
 	ROW_2,
 	ROW_3,

@@ -35,7 +35,7 @@ typedef struct ST_accountsDB_t
 {
     float balance;
     EN_accountState_t state;
-    uint8_t primaryAccountNumber[20];
+    uint8_t primaryAccountNumber[17];
 } ST_accountsDB_t;
 
 

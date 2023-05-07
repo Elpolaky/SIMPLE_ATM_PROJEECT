@@ -40,6 +40,19 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolserialnumber />
+    <avrdeviceexpectedsignature>0x1E9502</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolOptions xmlns="">
+        <InterfaceProperties>
+        </InterfaceProperties>
+      </ToolOptions>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <ToolName xmlns="">Simulator</ToolName>
+    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -182,6 +195,12 @@
     <Compile Include="MCAL\MEMORYMAP.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="MCAL\spi\spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCAL\spi\spi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="MCAL\timers\timer.c">
       <SubType>compile</SubType>
     </Compile>
@@ -207,6 +226,7 @@
     <Folder Include="MCAL\dio" />
     <Folder Include="MCAL\adc" />
     <Folder Include="MCAL\exi_interrupt" />
+    <Folder Include="MCAL\spi" />
     <Folder Include="MCAL\timers" />
     <Folder Include="HAL" />
     <Folder Include="SERVICE" />

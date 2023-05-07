@@ -20,6 +20,8 @@ MCAL\dio\DIO.c
 
 MCAL\exi_interrupt\EXI_INTERRUPT.c
 
+MCAL\spi\spi.c
+
 MCAL\timers\timer.c
 
 SERVICE\UTILS.c

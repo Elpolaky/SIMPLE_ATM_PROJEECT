@@ -9,7 +9,7 @@ static double g_ovfNum  ;
 static double g_time ;
 
  // used in TIMER_2_INT
-
+static void (*ptf_TIMER_2)(void)=NULL;
 static int32_t ovf = 0;
 /******************************************************************************************************/
 //										 TIMER 0
@@ -399,7 +399,11 @@ void TIMER_2_DELAY_MS(double time_ms){
 
 
 
-
+void TIMER2_SetCallBack(void(*ptf)(void)){
+	
+	ptf_TIMER_2= ptf;
+	
+}
 
 
 
@@ -419,16 +423,20 @@ void TIMER_2_INT(){
 
 ISR(TIMER2_OVF){
 
-	if (ovf < 19532 ){
-		ovf++;
-	}
-	else if ( ovf == 19532){
-		ovf =0 ;
-		//g_tempValue = 20 ;
+if(state){
+	
+		if (ovf < 7813 ){
+			ovf++;
+			enter_zeroFlag = 2 ;
+		}
+		else if ( ovf >= 7813){
+			enter_zeroFlag = 1 ;
+			
+		}
 		
-	
-	
+}else{
+	enter_zeroFlag = 0 ;
+	ovf = 0;
+	state = 0 ;
 }
-
-
 }

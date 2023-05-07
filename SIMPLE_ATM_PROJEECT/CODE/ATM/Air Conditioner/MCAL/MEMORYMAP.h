@@ -113,4 +113,14 @@ void INT_VECT(void)
 #define ADCLH     *((volatile unsigned short int*)0x24) // use this when we use right method to read high and low bits
 #define SFIOR     *((volatile uint8_t*)0x50)
 
+
+// SPI
+#define SPDR *((volatile uint8_t*)0x2F)
+#define SPSR *((volatile uint8_t*)0x2E)
+#define SPCR *((volatile uint8_t*)0x2D)
+#define UCSRC *((volatile uint8_t*)0x40)
+#define UBRRL *((volatile uint8_t*)0x29)
+#define UBRRH *((volatile uint8_t*)0x40)
+
+
 #endif /* memorymap_H_ */

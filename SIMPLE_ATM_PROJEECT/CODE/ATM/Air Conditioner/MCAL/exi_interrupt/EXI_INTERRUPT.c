@@ -135,16 +135,12 @@ void EXI_SetCallBack(EN_int_t Interrupt,void(*ptrf)(void))
 
 ISR (INT0_vect)
 {
-	car_flag = 0;
+	
 	if (ptrf_INT_0 != NULL)
 	{
 		ptrf_INT_0();
 		
-		DIO_WRITEPIN(pinc0,LOW);
-		DIO_WRITEPIN(pinc1,LOW);
-		DIO_WRITEPIN(pinc2,LOW);
-		DIO_WRITEPIN(pinc3,LOW);
-		
+
 	}
 }
 

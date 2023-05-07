@@ -9,7 +9,7 @@
 #include "../../SERVICE/STD_TYPES.h"
 #include "../../SERVICE/UTILES.h"
 #include "../MEMORYMAP.h"
-
+#include "../dio/DIO.h"
 
 
 
@@ -76,6 +76,10 @@ void TIMER_2_stop(void);
 Timer_ErrorStatus TIMER_2_setIntialValue(uint8_t a_value);
 Timer_ErrorStatus TIMER_2_OvfNum(double overflow);
 void TIMER_2_DELAY_MS(double _delay);
+
+void TIMER2_SetCallBack(void(*ptrf)(void));
+
+extern uint8_t enter_zeroFlag ,state ;
 
 void TIMER_2_INT();
 

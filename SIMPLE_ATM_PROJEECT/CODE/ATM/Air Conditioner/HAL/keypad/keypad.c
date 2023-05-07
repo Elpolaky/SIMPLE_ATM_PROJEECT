@@ -58,7 +58,7 @@ uint8_t KEYPAD_getKey(){
 			while(a_col_state == 0){
 				DIO_READPIN(a_cols,&a_col_state);
 				
-				//check the pressed row
+				//check the pressed row0
 				switch(a_rows){
 				
 					case ROW_0 :
